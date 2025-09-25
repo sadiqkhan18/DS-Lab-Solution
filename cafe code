@@ -1,0 +1,48 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    
+    float espresso = 2.50;
+    float latte = 3.00, cappuccino = 3.50;
+    float *ptr1 = &espresso;
+    float *ptr2 = &latte;
+    float *ptr3 = &cappuccino;
+
+ 
+    int espressoQty, latteQty, cappuccinoQty;
+    int *qEspresso = &espressoQty, *qLatte = &latteQty, *qCappuccino = &cappuccinoQty;
+
+ 
+    float espressoTotal, latteTotal, cappuccinoTotal, totalBill;
+    float *pTotalBill = &totalBill;
+
+    cout << "Enter quantity of Espresso: ";
+    cin >> *qEspresso;
+
+    cout << "Enter quantity of Latte: ";
+    cin >> *qLatte;
+
+    cout << "Enter quantity of Cappuccino: ";
+    cin >> *qCappuccino;
+
+  
+    espressoTotal = (*ptr1) * (*qEspresso);
+    latteTotal = (*ptr2) * (*qLatte);
+    cappuccinoTotal = (*ptr3) * (*qCappuccino);
+
+    *pTotalBill = espressoTotal + latteTotal + cappuccinoTotal;
+
+   
+    cout << fixed << setprecision(2);
+    cout << "\n----- Pointer Café Bill -----\n";
+    cout << "Item         Qty   Price   Subtotal\n";
+    cout << "Espresso     " << *qEspresso << "     " << *ptr1 << "   " << espressoTotal << endl;
+    cout << "Latte        " << *qLatte << "     " << *ptr2 << "   " << latteTotal << endl;
+    cout << "Cappuccino   " << *qCappuccino << "     " << *ptr3 << "   " << cappuccinoTotal << endl;
+    cout << "------------------------------\n";
+    cout << "Total Bill: " << *pTotalBill << endl;
+
+    return 0;
+}
