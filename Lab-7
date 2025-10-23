@@ -1,0 +1,213 @@
+#include <iostream>
+#include <conio.h>
+#include <iomanip>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+    Node* prev;
+
+    Node(int value) {
+        data = value;
+        next = nullptr;
+        prev = nullptr;
+    }
+};
+
+
+class DLL {
+private:
+    Node* head;
+    Node* tail;
+
+public:
+    DLL() : head(nullptr), tail(nullptr) {}
+
+ 
+    ~DLL() {
+        Node* current = head;
+        while (current) {
+            Node* temp = current;
+            current = current->next;
+            delete temp;
+        }
+        head = nullptr;
+        tail = nullptr;
+        cout << "\n[INFO] All nodes deleted successfully.\n";
+    }
+
+    void insertAtBegin(int value) {
+        Node* newNode = new Node(value);
+
+        newNode->next = head;
+        if (head)
+            head->prev = newNode;
+
+        head = newNode;
+
+        if (!tail)
+            tail = newNode;
+    }
+
+
+    void insertAtEnd(int value) {
+        if (!tail) {
+            insertAtBegin(value);
+            return;
+        }
+
+        Node* newNode = new Node(value);
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
+    }
+
+
+    void insertAtPos(int position, int value) {
+        if (position <= 0) {
+            cout << "[ERROR] Invalid position!\n";
+            return;
+        }
+
+
+        if (position == 1) {
+            insertAtBegin(value);
+            return;
+        }
+
+ 
+        Node* current = head;
+        for (int i = 1; i < position - 1 && current && current->next; ++i)
+            current = current->next;
+
+   
+        if (!current || !current->next) {
+            insertAtEnd(value);
+            return;
+        }
+
+        Node* newNode = new Node(value);
+        newNode->next = current->next;
+        newNode->prev = current;
+        current->next->prev = newNode;
+        current->next = newNode;
+    }
+
+    void deleteFB() {
+        if (!head) {
+            cout << "[INFO] List is already empty.\n";
+            return;
+        }
+
+        Node* temp = head;
+
+       
+        if (!head->next) {
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            head->prev = nullptr;
+        }
+
+        delete temp;
+        cout << "[INFO] Node deleted from the beginning.\n";
+    }
+
+
+    void display() {
+        if (!head) {
+            cout << "[INFO] The list is empty.\n";
+            return;
+        }
+
+        Node* current = head;
+        cout << "\n[Doubly Linked List Elements]\n";
+        cout << "---------------------------------\n";
+        while (current) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+        cout << "\n---------------------------------\n";
+    }
+
+
+    void Display() {
+        Node* temp = head;
+        cout << "\n------------------------------------------------------\n";
+        cout << "     Prev Address        |   Data   |     Next Address |   Node Address\n";
+        cout << "------------------------------------------------------\n";
+
+        while (temp) {
+            cout << setw(20) << temp->prev
+                 << " | " << setw(7) << temp->data
+                 << " | " << setw(18) << temp->next
+                 << " | " << setw(20) << temp
+                 << endl;
+            temp = temp->next;
+        }
+
+        cout << "\nTail: " << tail << endl;
+        cout << "------------------------------------------------------\n";
+    }
+
+
+    void DisplayNode(Node* node) {
+        if (!node) {
+            cout << "[ERROR] Node is NULL.\n";
+            return;
+        }
+
+        cout << "\n------------------------------------------------------\n";
+        cout << "     Prev Address        |   Data   |     Next Address |   Node Address\n";
+        cout << "------------------------------------------------------\n";
+        cout << setw(20) << node->prev
+             << " | " << setw(7) << node->data
+             << " | " << setw(18) << node->next
+             << " | " << setw(20) << node
+             << endl;
+        cout << "------------------------------------------------------\n";
+    }
+
+    void search(int value) {
+        Node* current = head;
+
+        while (current) {
+            if (current->data == value) {
+                cout << "\n[INFO] Node found.\n";
+                DisplayNode(current);
+                return;
+            }
+            current = current->next;
+        }
+
+        cout << "[INFO] Node with value " << value << " not found.\n";
+    }
+};
+
+
+int main() {
+    DLL list;
+
+
+    list.insertAtEnd(10);
+    list.insertAtEnd(20);
+    list.insertAtEnd(30);
+    list.insertAtEnd(40);
+    list.Display();
+
+    cout << "\n[TEST] Inserting 25 at position 3...\n";
+    list.insertAtPos(3, 25);
+    list.Display();
+
+    cout << "\n[TEST] Deleting the first element...\n";
+    list.deleteFB();
+    list.Display();
+
+    cout << "\n[TEST] Searching for node with value 30...\n";
+    list.search(30);
+
+    getch(); 
+    return 0;
+}
