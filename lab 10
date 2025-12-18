@@ -1,0 +1,180 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+template <class T>
+class TreeNode {
+    friend class BTree<T>;
+private:
+    T data;
+    TreeNode<T>* left;
+    TreeNode<T>* right;
+public:
+    TreeNode(T val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+template <class T>
+class BTree {
+private:
+    TreeNode<T>* root;
+
+   
+    void destroy(TreeNode<T>* node) {
+        if (!node) return;
+        destroy(node->left);
+        destroy(node->right);
+        delete node;
+    }
+
+    TreeNode<T>* copy(TreeNode<T>* node) {
+        if (!node) return nullptr;
+        TreeNode<T>* newNode = new TreeNode<T>(node->data);
+        newNode->left = copy(node->left);
+        newNode->right = copy(node->right);
+        return newNode;
+    }
+
+    void preOrder(TreeNode<T>* node) {
+        if (!node) return;
+        cout << node->data << " ";
+        preOrder(node->left);
+        preOrder(node->right);
+    }
+
+    void inOrder(TreeNode<T>* node) {
+        if (!node) return;
+        inOrder(node->left);
+        cout << node->data << " ";
+        inOrder(node->right);
+    }
+
+    void postOrder(TreeNode<T>* node) {
+        if (!node) return;
+        postOrder(node->left);
+        postOrder(node->right);
+        cout << node->data << " ";
+    }
+
+public:
+    // Constructor
+    BTree() : root(nullptr) {}
+
+    // Copy Constructor
+    BTree(const BTree<T>& other) {
+        root = copy(other.root);
+    }
+
+    // Destructor
+    ~BTree() {
+        destroy(root);
+    }
+
+    void setRoot(T value) {
+        if (root) root->data = value;
+        else root = new TreeNode<T>(value);
+    }
+
+    void setLeftChild(TreeNode<T>* node, T value) {
+        if (!node) return;
+        if (node->left) node->left->data = value;
+        else node->left = new TreeNode<T>(value);
+    }
+
+    void setRightChild(TreeNode<T>* node, T value) {
+        if (!node) return;
+        if (node->right) node->right->data = value;
+        else node->right = new TreeNode<T>(value);
+    }
+
+    TreeNode<T>* getLeftChild(TreeNode<T>* node) {
+        if (!node) return nullptr;
+        return node->left;
+    }
+
+    TreeNode<T>* getRightChild(TreeNode<T>* node) {
+        if (!node) return nullptr;
+        return node->right;
+    }
+
+    void preOrder() {
+        preOrder(root);
+        cout << endl;
+    }
+
+    void inOrder() {
+        inOrder(root);
+        cout << endl;
+    }
+
+    void postOrder() {
+        postOrder(root);
+        cout << endl;
+    }
+
+    void levelOrder() {
+        if (!root) return;
+        queue<TreeNode<T>*> q;
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode<T>* curr = q.front();
+            q.pop();
+            cout << curr->data << " ";
+            if (curr->left) q.push(curr->left);
+            if (curr->right) q.push(curr->right);
+        }
+        cout << endl;
+    }
+
+    // Search function
+    TreeNode<T>* search(T val) {
+        if (!root) return nullptr;
+        queue<TreeNode<T>*> q;
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode<T>* curr = q.front();
+            q.pop();
+            if (curr->data == val) return curr;
+            if (curr->left) q.push(curr->left);
+            if (curr->right) q.push(curr->right);
+        }
+        return nullptr;
+    }
+
+    TreeNode<T>* getRoot() {
+        return root;
+    }
+};
+
+int main() {
+    BTree<int> tree;
+
+    tree.setRoot(10);
+    TreeNode<int>* root = tree.getRoot();
+
+    tree.setLeftChild(root, 5);
+    tree.setRightChild(root, 20);
+
+    tree.setLeftChild(tree.getLeftChild(root), 3);
+    tree.setRightChild(tree.getLeftChild(root), 7);
+
+    cout << "PreOrder: ";
+    tree.preOrder();
+
+    cout << "InOrder: ";
+    tree.inOrder();
+
+    cout << "PostOrder: ";
+    tree.postOrder();
+
+    cout << "LevelOrder: ";
+    tree.levelOrder();
+
+    int key;
+    cout << "Search for: ";
+    cin >> key;
+    auto node = tree.search(key);
+    if (node) cout << "Found " << node->data << endl;
+    else cout << "Not found" << endl;
+
+    return 0;
+}
